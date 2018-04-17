@@ -34,20 +34,23 @@ public class ClientThread extends Thread{
 			username = inFromClient.readLine();
 			outToClient.writeBytes(server.getCurrentWordInfo());
 			
-			exitThread:
-			while(true) {
-				String clientGuess = inFromClient.readLine();
+			String clientGuess = "";
+			
+			while(!clientGuess.equals("EXIT")) {
+				clientGuess = inFromClient.readLine();
 				while(!server.broadcast(clientGuess, username)) {
 					if(clientGuess.equals("EXIT")) {
-						outToClient.writeBytes("EXIT");
-						connectionSocket.close();
-						server.removeMessageListener(this);
-						break exitThread;
+						outToClient.writeBytes("\n");
+						break;
 					}
 					outToClient.writeBytes("Wrong guess, please try again!\n");
 					clientGuess = inFromClient.readLine();
 				}
 			}
+			
+			connectionSocket.close();
+			server.removeMessageListener(this);
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
