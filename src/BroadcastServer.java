@@ -8,12 +8,7 @@ public class BroadcastServer {
 	private Entry<String, String> word;
 	
 	public BroadcastServer() {
-		initialize();
-	}
-	
-	private void initialize() {
-		String message = "Server started"+"#"+setNewWord();
-		listeners.forEach(l -> l.onMessage(message));
+		setNewWord();
 	}
 	
 	public boolean broadcast(String clientGuess, String username) {
@@ -28,7 +23,7 @@ public class BroadcastServer {
 	
 	private String setNewWord() {
 		this.word = Words.getWord();
-		System.out.println(word.getKey());
+		System.out.println("New Word: "+word.getKey());
 		return "New Word has "+word.getKey().length()+" letters"+"#"
 			 + "New Word's clue: "+word.getValue()+"\n";
 	}
@@ -39,6 +34,7 @@ public class BroadcastServer {
 	}
 
 	public void addMessageListener(ClientThread listener) {
+		System.out.println(listener.getUsername()+" just joined the game!");
 		listeners.add(listener);
 	}
 	public void removeMessageListener(ClientThread listener) {

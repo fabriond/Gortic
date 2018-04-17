@@ -10,7 +10,7 @@ public class ClientThread extends Thread{
 	private BroadcastServer server;
 	private BufferedReader inFromClient;
 	private DataOutputStream outToClient;
-	private String username;
+	private User user;
 	
 	public ClientThread(Socket connectionSocket, BroadcastServer server) throws IOException {
 		this.connectionSocket = connectionSocket;
@@ -28,17 +28,21 @@ public class ClientThread extends Thread{
 		}
 	}
 	
+	public String getUsername() {
+		return user.getName();
+	}
+	
 	@Override
 	public void run() {
 		try {
-			username = inFromClient.readLine();
+			user = new User(inFromClient.readLine());
 			outToClient.writeBytes(server.getCurrentWordInfo());
 			
 			String clientGuess = "";
 			
 			while(!clientGuess.equals("EXIT")) {
 				clientGuess = inFromClient.readLine();
-				while(!server.broadcast(clientGuess, username)) {
+				while(!server.broadcast(clientGuess, getUsername())) {
 					if(clientGuess.equals("EXIT")) {
 						outToClient.writeBytes("\n");
 						break;
@@ -46,6 +50,7 @@ public class ClientThread extends Thread{
 					outToClient.writeBytes("Wrong guess, please try again!\n");
 					clientGuess = inFromClient.readLine();
 				}
+				user.addScore();
 			}
 			
 			connectionSocket.close();
