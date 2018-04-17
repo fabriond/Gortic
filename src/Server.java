@@ -1,20 +1,24 @@
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
 
 public class Server {
-	private static int port = 1997;
-	private static ServerSocket welcomeSocket;
-	private static String currentWord;
+	
+	static BroadcastServer bs = new BroadcastServer();
+	static ServerSocket welcomeSocket;
+	static final int PORT = 1997;
+	
 	public static void main(String[] args) throws IOException {
-		welcomeSocket = new ServerSocket(port);
-		
-		currentWord = 
+		System.out.println("SERVER STARTED");
+		welcomeSocket = new ServerSocket(PORT);
 		
 		while(true) {
-			Socket connectionSocket = welcomeSocket.accept();
-			ClientThread ct = new ClientThread(connectionSocket);
+			ClientThread ct = new ClientThread(welcomeSocket.accept(), bs);
+			System.out.println("NEW CLIENT");
+			bs.addMessageListener(ct);
 			ct.start();
 		}
 	}
+	
 }
+
+

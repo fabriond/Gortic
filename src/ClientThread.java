@@ -1,29 +1,57 @@
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
 public class ClientThread extends Thread{
-
-	private Socket connectionSocket;
 	
-	public ClientThread(Socket connectionSocket) {
+	private Socket connectionSocket;
+	private BroadcastServer server;
+	private BufferedReader inFromClient;
+	private DataOutputStream outToClient;
+	private String username;
+	
+	public ClientThread(Socket connectionSocket, BroadcastServer server) throws IOException {
 		this.connectionSocket = connectionSocket;
+		this.server = server;
+		this.inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+		this.outToClient = new DataOutputStream(connectionSocket.getOutputStream());
+		
+	}
+	
+	public void onMessage(String message) {
+		try {
+			outToClient.writeBytes(message);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
 	public void run() {
-		String clientTry;
-		BufferedReader inFromClient;
-		DataOutputStream outToClient;
-		try{
-			inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-			outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-			clientTry = inFromClient.readLine();
+		try {
+			username = inFromClient.readLine();
+			outToClient.writeBytes(server.getCurrentWordInfo());
 			
-		}catch(Exception e) {
-			System.out.println("oloko bixo, essa fera aí meu");
+			exitThread:
+			while(true) {
+				String clientGuess = inFromClient.readLine();
+				while(!server.broadcast(clientGuess, username)) {
+					if(clientGuess.equals("EXIT")) {
+						outToClient.writeBytes("EXIT");
+						connectionSocket.close();
+						server.removeMessageListener(this);
+						break exitThread;
+					}
+					outToClient.writeBytes("Wrong guess, please try again!\n");
+					clientGuess = inFromClient.readLine();
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		
 	}
 
 }
