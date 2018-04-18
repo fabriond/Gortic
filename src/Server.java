@@ -14,7 +14,7 @@ public class Server {
 		
 		while(true) {
 			ClientThread ct = new ClientThread(welcomeSocket.accept(), bs);
-			System.out.println("NEW CLIENT");
+			System.out.println("New Client");
 			bs.addMessageListener(ct);
 			ct.start();
 		}

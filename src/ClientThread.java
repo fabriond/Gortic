@@ -10,14 +10,15 @@ public class ClientThread extends Thread{
 	private BroadcastServer server;
 	private BufferedReader inFromClient;
 	private DataOutputStream outToClient;
-	private User user;
+	private final String username;
+	private int score = 0;
 	
 	public ClientThread(Socket connectionSocket, BroadcastServer server) throws IOException {
 		this.connectionSocket = connectionSocket;
 		this.server = server;
 		this.inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
 		this.outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-		
+		this.username = inFromClient.readLine();		
 	}
 	
 	public void onMessage(String message) {
@@ -29,20 +30,27 @@ public class ClientThread extends Thread{
 	}
 	
 	public String getUsername() {
-		return user.getName();
+		return username;
+	}
+	
+	public int getScore() {
+		return score;
+	}
+	
+	public void addScore() {
+		score++;
 	}
 	
 	@Override
 	public void run() {
 		try {
-			user = new User(inFromClient.readLine());
 			outToClient.writeBytes(server.getCurrentWordInfo());
 			
 			String clientGuess = "";
 			
 			while(!clientGuess.equals("EXIT")) {
 				clientGuess = inFromClient.readLine();
-				while(!server.broadcast(clientGuess, getUsername())) {
+				while(!server.broadcast(clientGuess, this)) {
 					if(clientGuess.equals("EXIT")) {
 						outToClient.writeBytes("\n");
 						break;
@@ -50,9 +58,7 @@ public class ClientThread extends Thread{
 					outToClient.writeBytes("Wrong guess, please try again!\n");
 					clientGuess = inFromClient.readLine();
 				}
-				user.addScore();
 			}
-			
 			connectionSocket.close();
 			server.removeMessageListener(this);
 			
