@@ -41,6 +41,26 @@ public class ClientThread extends Thread{
 		score++;
 	}
 	
+	public String getActualGuess(String guess) {
+		if(guess.contains("LETTER#"))
+			return guess.substring(guess.indexOf("#")+1).replace("\n", "");
+		else return guess;
+	}
+	
+	public void letterGuess(String guess) {
+		guess = guess.replaceAll("[^a-zA-Z]", "");
+		System.out.println(guess);
+		for(char letterGuess : guess.toCharArray()) { 
+			if(!server.broadcast(letterGuess, this)) {
+				try {
+					outToClient.writeBytes("Letter '"+letterGuess+"' Guessed Incorrectly!\n");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
 	@Override
 	public void run() {
 		try {
@@ -49,7 +69,13 @@ public class ClientThread extends Thread{
 			String clientGuess = "";
 			
 			while(!clientGuess.equals("EXIT")) {
+				//LETTER#letterGuess
+				//wordGuess
 				clientGuess = inFromClient.readLine();
+				while(clientGuess.matches("LETTER#(.)*")) {
+					letterGuess(getActualGuess(clientGuess));
+					clientGuess = inFromClient.readLine(); 
+				}
 				while(!server.broadcast(clientGuess, this)) {
 					if(clientGuess.equals("EXIT")) {
 						outToClient.writeBytes("\n");
@@ -57,6 +83,10 @@ public class ClientThread extends Thread{
 					}
 					outToClient.writeBytes("Wrong guess, please try again!\n");
 					clientGuess = inFromClient.readLine();
+					while(clientGuess.matches("LETTER#(.)*")) {
+						letterGuess(getActualGuess(clientGuess));
+						clientGuess = inFromClient.readLine(); 
+					}
 				}
 			}
 			connectionSocket.close();
