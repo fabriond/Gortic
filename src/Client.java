@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Client {
 	static final String HOST = "localhost";
@@ -20,7 +22,7 @@ public class Client {
         
         System.out.print("Username: ");
 		outToServer.writeBytes(inFromUser.readLine()+"\n");
-		
+		System.out.printf("\r");
         Thread output = new Thread() {
         	public void run() {
 				try {
@@ -52,6 +54,10 @@ public class Client {
         	public void run() {
         		try {
         			while(clientUp) {
+        				for(int i = 5; i > 0; i--) {
+        					System.out.println("Cooldown: "+i+" seconds");
+        					Thread.sleep(1000);
+        				}
         				String currentGuess = inFromUser.readLine();
         				outToServer.writeBytes(currentGuess+"\n");
         				if(currentGuess.equals("EXIT")) clientUp = false;
@@ -59,10 +65,13 @@ public class Client {
         			System.out.println("\nInput Thread Closed");
 				} catch (IOException e) {
 					e.printStackTrace();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
         	}
         };
 	    output.start();
 	    input.start();
 	}
+
 }

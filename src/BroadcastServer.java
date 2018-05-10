@@ -48,6 +48,10 @@ public class BroadcastServer {
 	}
 	
 	public boolean broadcast(String clientGuess, ClientThread guesser) {
+		if(clientGuess.length() == 1) {
+			broadcast(clientGuess.charAt(0), guesser);
+			return false;
+		}
 		if(clientGuess.toLowerCase().equals(word.getKey().toLowerCase())) {
 			guesser.addScore();
 			String message = "Word \""+word.getKey()+"\" Guessed Correctly by "+guesser.getUsername()+"!"
@@ -56,6 +60,7 @@ public class BroadcastServer {
 			listeners.forEach(l -> l.onMessage(message));
 			return true;
 		}
+		
 		return false; //wrong answer
 	}
 	
