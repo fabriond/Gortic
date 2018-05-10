@@ -77,7 +77,7 @@ public class BroadcastServer {
 			 + "Current Word's clue: "+word.getValue()+"#"+getWrongGuesses();
 	}
 	
-	public String getWrongGuesses() {
+	private String getWrongGuesses() {
 		if(wrongGuesses.size() == 0) return "Incorrect Letters Guessed: None yet\n" ;
 		StringBuilder aux = new StringBuilder();
 		String comma = "";

@@ -57,7 +57,7 @@ public class ClientThread extends Thread{
 		}
 		if(correctCount == 0)
 			try {
-				outToClient.writeBytes(server.getWrongGuesses());
+				outToClient.writeBytes(server.getCurrentWordInfo());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
