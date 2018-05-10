@@ -43,22 +43,24 @@ public class ClientThread extends Thread{
 	
 	public String getActualGuess(String guess) {
 		if(guess.contains("LETTER#"))
-			return guess.substring(guess.indexOf("#")+1).replace("\n", "");
+			return guess.substring(guess.indexOf("#")+1);
 		else return guess;
 	}
 	
 	public void letterGuess(String guess) {
 		guess = guess.replaceAll("[^a-zA-Z]", "");
-		System.out.println(guess);
+		int correctCount = 0;
 		for(char letterGuess : guess.toCharArray()) { 
-			if(!server.broadcast(letterGuess, this)) {
-				try {
-					outToClient.writeBytes("Letter '"+letterGuess+"' Guessed Incorrectly!\n");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			if(server.broadcast(letterGuess, this)) {
+				correctCount++;
 			}
 		}
+		if(correctCount == 0)
+			try {
+				outToClient.writeBytes(server.getWrongGuesses());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 	}
 	
 	@Override

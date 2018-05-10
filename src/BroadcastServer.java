@@ -17,23 +17,32 @@ public class BroadcastServer {
 	}
 	
 	public boolean broadcast(char letterGuess, ClientThread guesser) {
+		char auxGuess = letterGuess;
 		letterGuess = Character.toUpperCase(letterGuess);
 		System.out.println(letterGuess);
 		String ch = Character.toString(letterGuess);
-		if(word.getKey().toUpperCase().contains(ch) && !hiddenWord.contains(ch)) {
-			hiddenWord = checkForChar(letterGuess);
-			String message = "Letter '"+letterGuess+"' Guessed Correctly by "+guesser.getUsername()+"!"
-						   + "##"+getCurrentWordInfo();
-			listeners.forEach(l -> l.onMessage(message));
-			
-			if(!hiddenWord.contains("_")) {
-				String message2 = "Whole Word Revealed#Setting New Word!#"+setNewWord();
-				listeners.forEach(l -> l.onMessage(message2));
+		if(word.getKey().toUpperCase().contains(ch)) {
+			if(!hiddenWord.contains(ch)) {
+				hiddenWord = checkForChar(letterGuess);
+				String message = "Letter '"+letterGuess+"' Guessed Correctly by "+guesser.getUsername()+"!"
+							   + "##"+getCurrentWordInfo();
+				listeners.forEach(l -> l.onMessage(message));
+				
+				if(!hiddenWord.contains("_")) {
+					String message2 = "Whole Word Revealed#Setting New Word!#"+setNewWord();
+					listeners.forEach(l -> l.onMessage(message2));
+				}
+				
+				return true;
+			} 
+			//case in which the letter was already guessed
+			else {
+				guesser.onMessage("Letter '"+auxGuess+"' Already Guessed Correctly!\n");
+				return false;
 			}
-			
-			return true;
 		}
 		wrongGuesses.add(letterGuess);
+		guesser.onMessage("Letter '"+auxGuess+"' Guessed Incorrectly!\n");
 		listeners.forEach(l -> {if(!l.equals(guesser)) l.onMessage(getWrongGuesses());});
 		return false;
 	}
@@ -68,7 +77,7 @@ public class BroadcastServer {
 			 + "Current Word's clue: "+word.getValue()+"#"+getWrongGuesses();
 	}
 	
-	private String getWrongGuesses() {
+	public String getWrongGuesses() {
 		if(wrongGuesses.size() == 0) return "Incorrect Letters Guessed: None yet\n" ;
 		StringBuilder aux = new StringBuilder();
 		String comma = "";
