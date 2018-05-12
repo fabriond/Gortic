@@ -37,8 +37,8 @@ public class ClientThread extends Thread{
 		return score;
 	}
 	
-	public void addScore() {
-		score++;
+	public void addScore(int number) {
+		score += number;
 	}
 	/*
 	private void letterGuess(String guess) {

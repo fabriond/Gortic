@@ -16,16 +16,32 @@ public class BroadcastServer {
 		setNewWord();
 	}
 	
-	public boolean broadcast(char letterGuess, ClientThread guesser) {
-		char auxGuess = letterGuess;
+	public boolean broadcast(String clientGuess, ClientThread guesser) {
+		if(clientGuess.length() == 1) {
+			processLetterGuess(clientGuess.charAt(0), guesser);
+		}
+		if(clientGuess.toUpperCase().equals(word.getKey().toUpperCase())) {
+			guesser.addScore(checkHiddenWord('_')*2);
+			String message = "Word \""+word.getKey()+"\" Guessed Correctly by "+guesser.getUsername()+"!"
+						   + "##Scoreboard: #"+getScoreboard()+"#"+setNewWord();
+			
+			listeners.forEach(l -> l.onMessage(message));
+			return true;
+		}
+		
+		return false; //wrong answer
+	}
+	
+	public boolean processLetterGuess(char letterGuess, ClientThread guesser) {
 		letterGuess = Character.toUpperCase(letterGuess);
-		System.out.println(letterGuess);
 		String ch = Character.toString(letterGuess);
 		if(word.getKey().toUpperCase().contains(ch)) {
 			if(!hiddenWord.contains(ch)) {
 				hiddenWord = checkForChar(letterGuess);
+				guesser.addScore(checkHiddenWord(letterGuess));
+				
 				String message = "Letter '"+letterGuess+"' Guessed Correctly by "+guesser.getUsername()+"!"
-							   + "##"+getCurrentWordInfo();
+							   + "##Scoreboard: #"+getScoreboard()+"#"+getCurrentWordInfo();
 				listeners.forEach(l -> l.onMessage(message));
 				
 				if(!hiddenWord.contains("_")) {
@@ -37,31 +53,14 @@ public class BroadcastServer {
 			} 
 			//case in which the letter was already guessed
 			else {
-				guesser.onMessage("Letter '"+auxGuess+"' Already Guessed Correctly!\n");
+				guesser.onMessage("Letter '"+letterGuess+"' Already Guessed Correctly!\n");
 				return false;
 			}
 		}
 		wrongGuesses.add(letterGuess);
-		guesser.onMessage("Letter '"+auxGuess+"' Guessed Incorrectly!\n");
+		guesser.onMessage("Letter '"+letterGuess+"' Guessed Incorrectly!\n");
 		listeners.forEach(l -> {if(!l.equals(guesser)) l.onMessage(getWrongGuesses());});
 		return false;
-	}
-	
-	public boolean broadcast(String clientGuess, ClientThread guesser) {
-		if(clientGuess.length() == 1) {
-			broadcast(clientGuess.charAt(0), guesser);
-			return false;
-		}
-		if(clientGuess.toLowerCase().equals(word.getKey().toLowerCase())) {
-			guesser.addScore();
-			String message = "Word \""+word.getKey()+"\" Guessed Correctly by "+guesser.getUsername()+"!"
-						   + "##Scoreboard: #"+getScoreboard()+"#"+setNewWord();
-			
-			listeners.forEach(l -> l.onMessage(message));
-			return true;
-		}
-		
-		return false; //wrong answer
 	}
 	
 	private String setNewWord() {
@@ -102,6 +101,10 @@ public class BroadcastServer {
 			}
 		}
 		return updatedHidden.toString();
+	}
+	
+	private int checkHiddenWord(char ch) {
+		return (int)hiddenWord.chars().filter(num -> num == ch).count();
 	}
 	
 	private String getScoreboard() {
