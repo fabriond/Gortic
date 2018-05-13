@@ -42,13 +42,13 @@ public class Client {
 									System.out.print("-");
 								System.out.println();
 							
-				            	for(int i = 0; i < contentFromServer.length; i++) {
-				            		System.out.println(contentFromServer[i]);
-				            	}
+								for(int i = 0; i < contentFromServer.length; i++) {
+									System.out.println(contentFromServer[i]);
+								}
 							}
-			            	System.out.println();
-			            	lastSize = contentFromServer[contentFromServer.length-1].length();
-			            	System.out.notify();
+							System.out.println();
+							lastSize = contentFromServer[contentFromServer.length-1].length();
+							System.out.notify();
 						}
 					}
 					if(DEBUG) System.out.println("Output Thread Closed");
