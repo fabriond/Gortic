@@ -9,6 +9,7 @@ import java.util.Scanner;
 public class Client {
 	static final String HOST = "localhost";
 	static final int PORT = 1997;
+	static final boolean DEBUG = false;
 	static boolean clientUp = true;
 	static boolean wait = true;
 	
@@ -32,23 +33,26 @@ public class Client {
 					int firstSize = 0;
 					int lastSize = 0;
 					while(clientUp) {
-						String[] contentFromServer = inFromServer.readLine().split("#");
+						String contentAux = inFromServer.readLine();
+						String[] contentFromServer = contentAux.split("#");
 						firstSize = contentFromServer[0].length();
 						synchronized(System.out) {
-							if(!contentFromServer[0].isEmpty()){
+							if(!contentAux.isEmpty()) {
 								for(int i = 0; i < Integer.max(firstSize, lastSize); i++)
 									System.out.print("-");
 								System.out.println();
+							
+				            	for(int i = 0; i < contentFromServer.length; i++) {
+				            		System.out.println(contentFromServer[i]);
+				            	}
 							}
-			            	for(int i = 0; i < contentFromServer.length; i++) {
-			            		System.out.println(contentFromServer[i]);
-			            	}
 			            	System.out.println();
 			            	lastSize = contentFromServer[contentFromServer.length-1].length();
 			            	System.out.notify();
 						}
 					}
-					System.out.println("Output Thread Closed");
+					if(DEBUG) System.out.println("Output Thread Closed");
+					System.out.println("Gortic Closed");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -73,7 +77,7 @@ public class Client {
 	        				System.out.println("You can continue guessing now!\n");
         				}
         			}
-        			System.out.println("\nInput Thread Closed");
+        			if(DEBUG)System.out.println("\nInput Thread Closed");
 				} catch (IOException e) {
 					e.printStackTrace();
 				} catch (InterruptedException e) {

@@ -40,32 +40,6 @@ public class ClientThread extends Thread{
 	public void addScore(int number) {
 		score += number;
 	}
-	/*
-	private void letterGuess(String guess) {
-		guess = guess.replaceAll("[^a-zA-Z]", "");
-		int correctCount = 0;
-		for(char letterGuess : guess.toCharArray()) { 
-			if(server.broadcast(letterGuess, this)) {
-				correctCount++;
-			}
-		}
-		if(correctCount == 0)
-			try {
-				outToClient.writeBytes(server.getCurrentWordInfo());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-	}
-	
-	private String nextWordGuess() throws IOException {
-		String guess = inFromClient.readLine();
-		while(guess.matches("LETTER#(.)*")) {
-			letterGuess(guess.substring(guess.indexOf("#")+1));
-			guess = inFromClient.readLine(); 
-		}
-		return guess;
-	}
-	*/
 	
 	@Override
 	public void run() {
