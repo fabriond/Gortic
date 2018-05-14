@@ -17,6 +17,16 @@ public class BroadcastServer {
 		setNewWord();
 	}
 	
+	/**
+	 * Recebe a tentativa do cliente
+	 * E a thread que está fazendo a tentativa (cliente)
+	 * Se o tamanho da tentativa for 1, é uma letra
+	 * Caso contrário, foi uma tentativa de acertar a palavra
+	 * OnMessage: Função para escrever para o cliente
+	 * @param clientGuess
+	 * @param guesser
+	 */
+	
 	public void broadcast(String clientGuess, ClientThread guesser) {
 		if(clientGuess.length() == 1) {
 			processLetterGuess(clientGuess.charAt(0), guesser);
