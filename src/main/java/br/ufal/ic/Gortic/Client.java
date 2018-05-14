@@ -35,6 +35,7 @@ public class Client {
 						String contentAux = inFromServer.readLine();
 						String[] contentFromServer = contentAux.split("#");
 						firstSize = contentFromServer[0].length();
+						
 						synchronized(System.out) {
 							if(!contentAux.isEmpty()) {
 								for(int i = 0; i < Integer.max(firstSize, lastSize); i++)

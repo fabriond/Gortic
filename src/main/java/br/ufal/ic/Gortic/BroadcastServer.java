@@ -17,23 +17,21 @@ public class BroadcastServer {
 		setNewWord();
 	}
 	
-	public boolean broadcast(String clientGuess, ClientThread guesser) {
+	public void broadcast(String clientGuess, ClientThread guesser) {
 		if(clientGuess.length() == 1) {
 			processLetterGuess(clientGuess.charAt(0), guesser);
 		}
-		if(clientGuess.toUpperCase().equals(word.getKey().toUpperCase())) {
+		else if(clientGuess.toUpperCase().equals(word.getKey().toUpperCase())) {
 			guesser.addScore(checkHiddenWord('_')*2);
 			String message = "Word \""+word.getKey()+"\" Guessed Correctly by "+guesser.getUsername()+"!"
 						   + "##Scoreboard: #"+getScoreboard()+"#"+setNewWord();
 			
 			listeners.forEach(l -> l.onMessage(message));
-			return true;
 		}
-		
-		return false; //wrong answer
+		else guesser.onMessage("Wrong guess, please try again!\n");
 	}
 	
-	public boolean processLetterGuess(char letterGuess, ClientThread guesser) {
+	public void processLetterGuess(char letterGuess, ClientThread guesser) {
 		letterGuess = Character.toUpperCase(letterGuess);
 		String ch = Character.toString(letterGuess);
 		if(word.getKey().toUpperCase().contains(ch)) {
@@ -49,19 +47,16 @@ public class BroadcastServer {
 					String message2 = "Whole Word Revealed#Setting New Word!#"+setNewWord();
 					listeners.forEach(l -> l.onMessage(message2));
 				}
-				
-				return true;
+			
 			} 
 			//case in which the letter was already guessed
-			else {
-				guesser.onMessage("Letter '"+letterGuess+"' Already Guessed Correctly!\n");
-				return false;
-			}
+			else guesser.onMessage("Letter '"+letterGuess+"' Already Guessed Correctly!\n");
 		}
-		wrongGuesses.add(letterGuess);
-		guesser.onMessage("Letter '"+letterGuess+"' Guessed Incorrectly!\n");
-		listeners.forEach(l -> {if(!l.equals(guesser)) l.onMessage(getWrongGuesses());});
-		return false;
+		else {
+			guesser.onMessage("Letter '"+letterGuess+"' Guessed Incorrectly!\n");
+			if(wrongGuesses.add(letterGuess))
+				listeners.forEach(l -> {if(!l.equals(guesser)) l.onMessage(getCurrentWordInfo());});
+		}
 	}
 	
 	private String setNewWord() {
