@@ -1,3 +1,4 @@
+package br.ufal.ic.Gortic;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;

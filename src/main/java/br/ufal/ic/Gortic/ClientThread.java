@@ -1,3 +1,4 @@
+package br.ufal.ic.Gortic;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -14,10 +15,15 @@ public class ClientThread extends Thread{
 	private int score = 0;
 	
 	public ClientThread(Socket connectionSocket, BroadcastServer server) throws IOException {
+		this(connectionSocket, new BufferedReader(new InputStreamReader(connectionSocket.getInputStream())),
+				new DataOutputStream(connectionSocket.getOutputStream()), server);		
+	}
+
+	public ClientThread(Socket connectionSocket, BufferedReader br, DataOutputStream dos, BroadcastServer server) throws IOException {
 		this.connectionSocket = connectionSocket;
 		this.server = server;
-		this.inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-		this.outToClient = new DataOutputStream(connectionSocket.getOutputStream());
+		this.inFromClient = br;
+		this.outToClient = dos;
 		this.username = inFromClient.readLine();		
 	}
 	
