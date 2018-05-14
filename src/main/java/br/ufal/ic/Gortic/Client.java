@@ -14,12 +14,11 @@ public class Client {
 	static boolean clientUp = true;
 	static boolean wait = true;
 	
-	@SuppressWarnings("resource")
 	public static void main(String[] args) throws UnknownHostException, IOException {
 		System.out.print("Username: ");
 		Scanner scan = new Scanner(System.in);
 		String name = scan.nextLine();
-		System.out.print(name);
+		
 		Socket clientSocket = new Socket(HOST, PORT);
 		
         BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
@@ -27,7 +26,6 @@ public class Client {
         BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         
 		outToServer.writeBytes(name+"\n");
-		System.out.printf("\r");
         Thread output = new Thread() {
         	public void run() {
 				try {
@@ -53,6 +51,8 @@ public class Client {
 						}
 					}
 					if(DEBUG) System.out.println("Output Thread Closed");
+					scan.close();
+					clientSocket.close();
 					System.out.println("Gortic Closed");
 				} catch (IOException e) {
 					e.printStackTrace();
