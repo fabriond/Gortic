@@ -1,4 +1,4 @@
-package br.ufal.ic.Gortic;
+package br.ufal.ic.Gortic.Client;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;

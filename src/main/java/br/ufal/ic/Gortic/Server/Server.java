@@ -1,6 +1,8 @@
-package br.ufal.ic.Gortic;
+package br.ufal.ic.Gortic.Server;
 import java.io.IOException;
 import java.net.ServerSocket;
+
+import br.ufal.ic.Gortic.Client.ClientThread;
 
 public class Server {
 	
@@ -10,6 +12,7 @@ public class Server {
 	
 	public static void main(String[] args) throws IOException {
 		System.out.println("SERVER STARTED");
+		System.out.println(System.getProperty("java.class.path"));
 		bs = new BroadcastServer();
 		welcomeSocket = new ServerSocket(PORT);
 		

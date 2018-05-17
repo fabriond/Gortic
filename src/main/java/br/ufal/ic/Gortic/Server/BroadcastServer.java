@@ -1,8 +1,11 @@
-package br.ufal.ic.Gortic;
+package br.ufal.ic.Gortic.Server;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+
+import br.ufal.ic.Gortic.Client.ClientThread;
+
 import java.util.Set;
 
 public class BroadcastServer {
@@ -16,16 +19,6 @@ public class BroadcastServer {
 	public BroadcastServer() {
 		setNewWord();
 	}
-	
-	/**
-	 * Recebe a tentativa do cliente
-	 * E a thread que está fazendo a tentativa (cliente)
-	 * Se o tamanho da tentativa for 1, é uma letra
-	 * Caso contrário, foi uma tentativa de acertar a palavra
-	 * OnMessage: Função para escrever para o cliente
-	 * @param clientGuess
-	 * @param guesser
-	 */
 	
 	public void broadcast(String clientGuess, ClientThread guesser) {
 		if(clientGuess.length() == 1) {

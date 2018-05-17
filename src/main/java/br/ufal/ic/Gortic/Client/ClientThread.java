@@ -1,9 +1,11 @@
-package br.ufal.ic.Gortic;
+package br.ufal.ic.Gortic.Client;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+
+import br.ufal.ic.Gortic.Server.BroadcastServer;
 
 public class ClientThread extends Thread{
 	
@@ -58,9 +60,9 @@ public class ClientThread extends Thread{
 				server.broadcast(clientGuess, this);
 				clientGuess = inFromClient.readLine();
 			}
+			outToClient.writeBytes("\n");
 			connectionSocket.close();
 			server.removeMessageListener(this);
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
