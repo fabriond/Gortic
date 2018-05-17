@@ -10,4 +10,4 @@ Explicando melhor, assim que o cliente se conecta ao servidor, aparece para ele,
 O projeto foi feito no Eclipse (mais especificamente, um projeto Maven) mas como colocamos apenas as classes no repositório, basta importar o projeto.
 Ao abrir o projeto, basta executar a classe Server e logo após, executar a classe Client. Cada classe Client executada, será pedido o "username" do cliente atual. Importante ressaltar que enquanto o usuário não colocar o username naquele cliente, não é estabelecido a conexão com o servidor.
 ## Funções utilizadas:
- Das funções primitivas relacionadas ao conceito de socket,
+ Das funções primitivas relacionadas ao conceito de socket, como nós usamos a linguagem Java, foram usados: Socket normal e serverSocket do Java, que permite o acesso de usuários ao servidor. Além disso, a concorrência local nos clientes foi em relação à threads de leitura e escrita. Concorrência na rede foi entre clientes, uma vez que os clientes podiam fazer várias tentativas simultaneamente (respeitando o cooldown). Em relação à arquitetura do projeto usamos o "mediator" como padrão de projeto, para servir os dados do jogo para todos os clientes.
