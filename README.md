@@ -10,4 +10,20 @@ Explicando melhor, assim que o cliente se conecta ao servidor, aparece para ele,
 O projeto foi feito no Eclipse (mais especificamente, um projeto Maven) mas como colocamos apenas as classes no repositório, basta importar o projeto.
 Ao abrir o projeto, basta executar a classe Server e logo após, executar a classe Client. Cada classe Client executada, será pedido o "username" do cliente atual. Importante ressaltar que enquanto o usuário não colocar o username naquele cliente, não é estabelecido a conexão com o servidor.
 ## Funções utilizadas:
- Das funções primitivas relacionadas ao conceito de socket, como nós usamos a linguagem Java, foram usados: Socket normal e serverSocket do Java, que permite o acesso de usuários ao servidor. Além disso, a concorrência local nos clientes foi em relação à threads de leitura e escrita. Concorrência na rede foi entre clientes, uma vez que os clientes podiam fazer várias tentativas simultaneamente (respeitando o cooldown). Em relação à arquitetura do projeto usamos o "mediator" como padrão de projeto, para servir os dados do jogo para todos os clientes.
+- classe ServerSocket
+  - `accept()`
+    - permite ao servidor aguardar pela conexão dos usuários
+- classe Socket
+  - Vale ressaltar que o construtor da classe Socket realiza a conexão com o servidor
+  - `getOutputStream()`
+    - utilizada para instanciar a classe DataOutputStream
+  - `getInputStream()` 
+    - utilizada para instanciar a classe BufferedReader DataOutputStream
+- classe DataOutputStream 
+  - `writeBytes(String arg0)`
+    - utilizado para enviar dados do servidor para o cliente ou vice versa
+- classe BufferedReader
+  - `readLine()`
+    - utilizado para receber informações vindas do servidor(no caso do cliente) ou do cliente(no caso do servidor)
+
+Além disso, ocorrem dois tipos de concorrência, a concorrência local nos clientes que ocorre entre as threads de leitura e escrita, para que o jogo sempre atualize com o conteúdo vindo do servidor e não tenha que esperar um input para então atualizar, e a concorrência na rede que ocorre entre clientes, uma vez que os clientes podem fazer tentativas simultaneamente (respeitando o tempo de espera de 5 segundos por tentativa). Em relação à arquitetura do projeto usamos o padrão de projeto Mediator para servir os dados do jogo para todos os clientes "simultaneamente".
