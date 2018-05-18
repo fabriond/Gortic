@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.net.SocketException;
 
 import br.ufal.ic.Gortic.Server.BroadcastServer;
 
@@ -55,14 +56,19 @@ public class ClientThread extends Thread{
 			outToClient.writeBytes(server.getCurrentWordInfo());
 			
 			String clientGuess = "";
-			clientGuess = inFromClient.readLine();
-			while(!clientGuess.equals("EXIT")) {
-				server.broadcast(clientGuess, this);
+			try {
 				clientGuess = inFromClient.readLine();
+				while(!clientGuess.equals("EXIT")) {
+					server.broadcast(clientGuess, this);
+					clientGuess = inFromClient.readLine();
+				}
+				outToClient.writeBytes("\n");
+			} catch(SocketException se) {
+				System.err.println("Client "+username+" closed the program unexpectedly, disconnecting him"); 
+			}finally {
+				connectionSocket.close();
+				server.removeMessageListener(this);
 			}
-			outToClient.writeBytes("\n");
-			connectionSocket.close();
-			server.removeMessageListener(this);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
