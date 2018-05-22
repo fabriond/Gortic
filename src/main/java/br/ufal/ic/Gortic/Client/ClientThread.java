@@ -14,24 +14,25 @@ public class ClientThread extends Thread{
 	private BroadcastServer server;
 	private BufferedReader inFromClient;
 	private DataOutputStream outToClient;
-	private final String username;
+	private String username;
 	private int score = 0;
 	
 	public ClientThread(Socket connectionSocket, BroadcastServer server) throws IOException {
 		this(connectionSocket, new BufferedReader(new InputStreamReader(connectionSocket.getInputStream())),
-				new DataOutputStream(connectionSocket.getOutputStream()), server);		
+				new DataOutputStream(connectionSocket.getOutputStream()), server);
+		this.username = inFromClient.readLine();
 	}
-
+	
 	public ClientThread(Socket connectionSocket, BufferedReader br, DataOutputStream dos, BroadcastServer server) throws IOException {
 		this.connectionSocket = connectionSocket;
 		this.server = server;
 		this.inFromClient = br;
 		this.outToClient = dos;
-		this.username = inFromClient.readLine();		
 	}
 	
 	public void onMessage(String message) {
 		try {
+			if(!message.endsWith("\n")) message += "\n";
 			outToClient.writeBytes(message);
 		} catch (IOException e) {
 			e.printStackTrace();

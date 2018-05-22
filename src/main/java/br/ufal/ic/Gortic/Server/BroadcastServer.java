@@ -34,7 +34,7 @@ public class BroadcastServer {
 		else guesser.onMessage("Wrong guess, please try again!\n");
 	}
 	
-	public void processLetterGuess(char letterGuess, ClientThread guesser) {
+	private void processLetterGuess(char letterGuess, ClientThread guesser) {
 		letterGuess = Character.toUpperCase(letterGuess);
 		String ch = Character.toString(letterGuess);
 		if(word.getKey().toUpperCase().contains(ch)) {

@@ -3,20 +3,42 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.ConnectException;
 import java.net.Socket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.Scanner;
 
 public class Client {
-	static final String HOST = "localhost";
-	static final int PORT = 1997;
-	static final boolean DEBUG = false;
-	static boolean clientUp = true;
-	static boolean wait = true;
+    DataOutputStream outToServer;
+    BufferedReader inFromServer;
 	
-	public static void main(String[] args) throws UnknownHostException, IOException {
+	public Client(Socket clientSocket) throws IOException {
+		this(new DataOutputStream(clientSocket.getOutputStream()), 
+			 new BufferedReader(new InputStreamReader(clientSocket.getInputStream())));
+	}
+	
+	Client(DataOutputStream outToServer, BufferedReader inFromServer) {
+		this.outToServer = outToServer;
+		this.inFromServer = inFromServer;
+	}
+	
+	/**
+	 * Sends message to server
+	 * @param message
+	 * @throws IOException
+	 */
+	public void send(String message) throws IOException {
+		if(!message.endsWith("\n")) message += "\n";
+		outToServer.writeBytes(message);
+	}
+	
+	/**
+	 * Reads message from server
+	 * @return Server message split by #
+	 * @throws IOException
+	 */
+	public String[] receive() throws IOException {
+		return inFromServer.readLine().split("#");
+	}
+/*
+	public static void main(String[] args) IOException {
 		System.out.print("Username: ");
 		Scanner scan = new Scanner(System.in);
 		String name = scan.nextLine();
@@ -102,5 +124,5 @@ public class Client {
 	    output.start();
 	    input.start();
 	}
-
+*/
 }
